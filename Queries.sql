@@ -1,41 +1,41 @@
 --Query 1
-SELECT total_month.month,
-    e_month."Ensembles/month",
-    gl_month."Group lessons/month",
-    il_month."Individual lessons/month",
-    total_month.total
-   FROM total_month
-     FULL JOIN il_month ON il_month.month = total_month.month
-     FULL JOIN gl_month ON gl_month.month = total_month.month
-     FULL JOIN e_month ON e_month.month = total_month.month
-  WHERE EXTRACT(year FROM total_month.month) = 2023::numeric;
+SELECT public.total_month.month,
+    public.e_month."Ensembles/month",
+    public.gl_month."Group lessons/month",
+    public.il_month."Individual lessons/month",
+    public.total_month.total
+   FROM public.total_month
+     FULL JOIN public.il_month ON public.il_month.month = public.total_month.month
+     FULL JOIN public.gl_month ON public.gl_month.month = public.total_month.month
+     FULL JOIN public.e_month ON public.e_month.month = public.total_month.month
+  WHERE EXTRACT(year FROM public.total_month.month) = 2023::numeric;
 
   --Query 2
-   SELECT number_of_siblings.siblings AS "Number of siblings",
-    count(number_of_siblings.siblings) AS count
-   FROM number_of_siblings
-  GROUP BY number_of_siblings.siblings
-  ORDER BY number_of_siblings.siblings;
+   SELECT public.number_of_siblings.siblings AS "Number of siblings",
+    count(public.number_of_siblings.siblings) AS count
+   FROM public.number_of_siblings
+  GROUP BY public.number_of_siblings.siblings
+  ORDER BY public.number_of_siblings.siblings;
 
   --Query 3
-   SELECT count(instructor_lesson_month.month) AS lessons
-   FROM instructor_lesson_month
-  WHERE instructor_lesson_month.month = EXTRACT(month FROM CURRENT_DATE)
-  GROUP BY instructor_lesson_month.person_id
- HAVING count(instructor_lesson_month.month) > 5
-  ORDER BY (count(instructor_lesson_month.month));
+   SELECT count(public.instructor_lesson_month.month) AS lessons
+   FROM public.instructor_lesson_month
+  WHERE public.instructor_lesson_month.month = EXTRACT(month FROM CURRENT_DATE)
+  GROUP BY public.instructor_lesson_month.person_id
+ HAVING count(public.instructor_lesson_month.month) > 5
+  ORDER BY (count(public.instructor_lesson_month.month));
 
   --Query 4
-   SELECT next_week_ensembles.id,
-    next_week_ensembles.genre,
-    next_week_ensembles.weekday,
+   SELECT public.next_week_ensembles.id,
+    public.next_week_ensembles.genre,
+    public.next_week_ensembles.weekday,
         CASE
-            WHEN (( SELECT seat_count.count
-               FROM seat_count
-              WHERE seat_count.id = next_week_ensembles.id)) < next_week_ensembles.max_students THEN next_week_ensembles.max_students - (( SELECT seat_count.count
-               FROM seat_count
-              WHERE seat_count.id = next_week_ensembles.id))
+            WHEN (( SELECT public.seat_count.count
+               FROM public.seat_count
+              WHERE public.seat_count.id = public.next_week_ensembles.id)) < public.next_week_ensembles.max_students THEN public.next_week_ensembles.max_students - (( SELECT public.seat_count.count
+               FROM public.seat_count
+              WHERE public.seat_count.id = public.next_week_ensembles.id))
             ELSE 0::bigint
         END AS "seats available"
-   FROM next_week_ensembles
-  ORDER BY next_week_ensembles.genre, next_week_ensembles.weekday;
+   FROM public.next_week_ensembles
+  ORDER BY public.next_week_ensembles.genre, public.next_week_ensembles.weekday;
